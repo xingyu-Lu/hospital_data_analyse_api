@@ -16,7 +16,7 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
-                'content' => '前后端建代码仓库，系统基础搭建等等',
+                'content' => '前后端建代码仓库，系统基础搭建，前后端部署我服务器等等',
                 'timestamp' => '2022-02-09',
             ],
         ];
