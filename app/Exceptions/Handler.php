@@ -2,7 +2,13 @@
 
 namespace App\Exceptions;
 
+use Flugg\Responder\Exceptions\ConvertsExceptions;
+use Flugg\Responder\Exceptions\Http\HttpException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
