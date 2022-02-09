@@ -7,6 +7,8 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ConvertsExceptions;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -37,5 +39,37 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Render an exception into an HTTP response.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Exception  $exception
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Exception
+     */
+    public function render($request, Throwable $exception)
+    {
+        //没有登录
+        if ($exception instanceof AuthenticationException) {
+            return responder()->error(999, '没有登录')->respond(401);
+        }
+
+        //没有权限
+        if ($exception instanceof AuthorizationException) {
+            return responder()->error(1000, '没有权限')->respond(403);
+        }
+
+        if ($request->is('api/*')) {
+            $this->convertDefaultException($exception);
+
+            if ($exception instanceof HttpException) {
+                return $this->renderResponse($exception);
+            }
+        }
+
+        return parent::render($request, $exception);
     }
 }
