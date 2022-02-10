@@ -32,3 +32,33 @@ CREATE TABLE `syy_role_has_menus` (
   `menu_id` int(11) NOT NULL DEFAULT '0' COMMENT '菜单id',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='角色菜单表';
+
+DROP TABLE IF EXISTS `syy_office_contrasts`;
+CREATE TABLE `syy_office_contrasts` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `key` varchar(50) NOT NULL DEFAULT '' COMMENT 'key',
+  `value` varchar(50) NOT NULL DEFAULT '' COMMENT 'value',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='科室名称对应表';
+
+DROP TABLE IF EXISTS `syy_charge_projects`;
+CREATE TABLE `syy_charge_projects` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `key` varchar(50) NOT NULL DEFAULT '' COMMENT 'key',
+  `value` varchar(50) NOT NULL DEFAULT '' COMMENT 'value',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='收费项目子类对应表';
+
+DROP TABLE IF EXISTS `syy_financial_spends`;
+CREATE TABLE `syy_financial_spends` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `key` varchar(50) NOT NULL DEFAULT '' COMMENT 'key',
+  `value` varchar(50) NOT NULL DEFAULT '' COMMENT 'value',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='财务支出科目对应表';
