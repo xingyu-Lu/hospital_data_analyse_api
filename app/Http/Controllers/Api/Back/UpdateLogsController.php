@@ -16,6 +16,10 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
+                'content' => '了解了查询统计语句，建修正对照表，并导入excel数据等等',
+                'timestamp' => '2022-02-10',
+            ],
+            [
                 'content' => '前后端建代码仓库，系统基础搭建，前后端部署我服务器等等',
                 'timestamp' => '2022-02-09',
             ],
