@@ -47,5 +47,16 @@ Route::namespace('Api\Back')->prefix('back')->group(function () {
 
         // 更新日志
         Route::get('updatelogs/index', 'UpdateLogsController@index')->name('updatelogs.index');
+
+        // 开单收入
+        Route::get('billingincomes/export', 'BillingIncomesController@export')->name('billingincomes/export');
+        Route::apiResource('billingincomes', 'BillingIncomesController');
+
+        // 接单收入
+        Route::get('receiveincomes/export', 'ReceiveIncomesController@export')->name('receiveincomes/export');
+        Route::apiResource('receiveincomes', 'ReceiveIncomesController');
+
+        // 科室列表
+        Route::apiResource('offices', 'OfficesController');
     });
 });
