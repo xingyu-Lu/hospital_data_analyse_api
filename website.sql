@@ -66,9 +66,10 @@ CREATE TABLE `syy_financial_spends` (
 DROP TABLE IF EXISTS `syy_billing_incomes`;
 CREATE TABLE `syy_billing_incomes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
   `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
   `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
-  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月',
+  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月 2：整月',
   `billing_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '开单科室',
   `patient_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '病人科室',
   `charge_subclass` varchar(50) NOT NULL DEFAULT '' COMMENT '收费子类',
@@ -82,9 +83,10 @@ CREATE TABLE `syy_billing_incomes` (
 DROP TABLE IF EXISTS `syy_receive_incomes`;
 CREATE TABLE `syy_receive_incomes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
   `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
   `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
-  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月',
+  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月 2：整月',
   `receive_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '开单科室',
   `patient_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '病人科室',
   `charge_subclass` varchar(50) NOT NULL DEFAULT '' COMMENT '收费子类',

@@ -14,11 +14,8 @@ class BillingIncomesController extends Controller
     {
         $params = $request->all();
 
-        $start_year = date('Y', strtotime($params['date'][0]));
-        $start_month = date('n', strtotime($params['date'][0]));
-
-        $end_year = date('Y', strtotime($params['date'][1]));
-        $end_month = date('n', strtotime($params['date'][1]));        
+        $start_date = strtotime($params['date'][0]);
+        $end_date = strtotime($params['date'][1]);    
 
         $office_name = $params['office_name'];
         $charge_subclass = $params['charge_subclass'];
@@ -26,10 +23,8 @@ class BillingIncomesController extends Controller
         $where = [];
 
         $where = [
-            ['year', '>=', $start_year],
-            ['year', '<=', $end_year],
-            ['month', '>=', $start_month],
-            ['month', '<=', $end_month],
+            ['date', '>=', $start_date],
+            ['date', '<=', $end_date],
             ['billing_dep', '=', $office_name]
         ];
 
@@ -39,12 +34,12 @@ class BillingIncomesController extends Controller
             ];
         }
 
-        $billing_income = BillingIncome::where($where)->get()->toArray();
+        $billing_income = BillingIncome::where($where)->orderBy('date', 'desc')->get()->toArray();
 
         $res_data = [];
 
         foreach ($billing_income as $key => $value) {
-            $select_key = $value['billing_dep'] . '-' . $value['charge_subclass'];
+            $select_key = $value['date'] . '-' . $value['billing_dep'] . '-' . $value['charge_subclass'];
 
             if (isset($res_data[$select_key])) {
                 $res_data[$select_key]['num'] = bcadd($res_data[$select_key]['num'], $value['num']);
@@ -55,7 +50,7 @@ class BillingIncomesController extends Controller
                 $res_data[$select_key] = [
                     'year' => $value['year'],
                     'month' => $value['month'],
-                    'date' => $value['year'] . '-' . $value['month'],
+                    'date' => date('Y-m', $value['date']),
                     'billing_dep' => $value['billing_dep'],
                     'patient_dep' => $value['patient_dep'],
                     'charge_subclass' => $value['charge_subclass'],
@@ -92,7 +87,7 @@ class BillingIncomesController extends Controller
         }
 
          //下载
-        $filename = $office_name . '-开单收入' . $start_year . '-' . $start_month . '到' . $end_year . '-' . $end_month . '.xlsx';
+        $filename = $office_name . '-开单收入' . '.xlsx';
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="'.$filename.'"');
         header('Cache-Control: max-age=0');
@@ -111,11 +106,8 @@ class BillingIncomesController extends Controller
     {
         $params = $request->all();
 
-        $start_year = date('Y', strtotime($params['date'][0]));
-        $start_month = date('n', strtotime($params['date'][0]));
-
-        $end_year = date('Y', strtotime($params['date'][1]));
-        $end_month = date('n', strtotime($params['date'][1]));        
+        $start_date = strtotime($params['date'][0]);
+        $end_date = strtotime($params['date'][1]);      
 
         $office_name = $params['office_name'];
         $charge_subclass = $params['charge_subclass'];
@@ -123,10 +115,8 @@ class BillingIncomesController extends Controller
         $where = [];
 
         $where = [
-            ['year', '>=', $start_year],
-            ['year', '<=', $end_year],
-            ['month', '>=', $start_month],
-            ['month', '<=', $end_month],
+            ['date', '>=', $start_date],
+            ['date', '<=', $end_date],
             ['billing_dep', '=', $office_name]
         ];
 
@@ -136,12 +126,12 @@ class BillingIncomesController extends Controller
             ];
         }
 
-        $billing_income = BillingIncome::where($where)->get()->toArray();
+        $billing_income = BillingIncome::where($where)->orderBy('date', 'desc')->get()->toArray();
 
         $res_data = [];
 
         foreach ($billing_income as $key => $value) {
-            $select_key = $value['billing_dep'] . '-' . $value['charge_subclass'];
+            $select_key = $value['date'] . '-' . $value['billing_dep'] . '-' . $value['charge_subclass'];
 
             if (isset($res_data[$select_key])) {
                 $res_data[$select_key]['num'] = bcadd($res_data[$select_key]['num'], $value['num']);
@@ -152,7 +142,7 @@ class BillingIncomesController extends Controller
                 $res_data[$select_key] = [
                     'year' => $value['year'],
                     'month' => $value['month'],
-                    'date' => $value['year'] . '-' . $value['month'],
+                    'date' => date('Y-m', $value['date']),
                     'billing_dep' => $value['billing_dep'],
                     'patient_dep' => $value['patient_dep'],
                     'charge_subclass' => $value['charge_subclass'],
@@ -182,6 +172,19 @@ class BillingIncomesController extends Controller
             $series_arr[] = [
                 'name' => $value,
                 'type' => 'bar',
+                'label' => [
+                    'show' => true,
+                    'position' => 'insideBottom',
+                    'distance' => 15,
+                    'align' => 'left',
+                    'verticalAlign' => 'middle',
+                    'rotate' => 90,
+                    'formatter' => '{c} {name|{a}}',
+                    'fontSize' => 16,
+                    'rich' => [
+                        'name' => []
+                    ]
+                ],
                 'stack' => '',
                 'areaStyle' => [],
                 'emphasis' => ['focus' => 'series'],

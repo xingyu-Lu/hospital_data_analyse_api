@@ -18,7 +18,7 @@ class Incomes extends Command
      *
      * @var string
      */
-    protected $signature = 'incomes:incomes {year?},{month?},{type?}';
+    protected $signature = 'incomes:incomes {year_month?},,{type?}';
 
     /**
      * The console command description.
@@ -50,9 +50,12 @@ class Incomes extends Command
 
         $arguments = $this->arguments();
 
-        $year = $arguments['year'] ?? date("Y");
+        $date = $arguments['year_month'] ?? date("Y-m");
+        
+        $year = date('Y', strtotime($date));
+        $month = date('n', strtotime($date));
 
-        $month = $arguments['month'] ?? date("n");
+        $date = strtotime($date);
 
         $day = date("j");
 
@@ -66,18 +69,18 @@ class Incomes extends Command
 
         $type = $arguments['type'] ?? $type_now;
 
-        $start_date = $end_date = '';
+        // $start_date = $end_date = '';
 
-        if ($type == 0) {
-            $start_date = $year . '-' . $month . '-01';
-            $end_date = $year . '-' . $month . '-15';
-        } else {
-            $BeginDate = date('Y-m-01', strtotime(date("Y-m-d")));
-            $EndDate = date('j', strtotime("$BeginDate +1 month -1 day"));
+        // if ($type == 0) {
+        //     $start_date = $year . '-' . $month . '-01';
+        //     $end_date = $year . '-' . $month . '-15';
+        // } else {
+        //     $BeginDate = date('Y-m-01', strtotime(date("Y-m-d")));
+        //     $EndDate = date('j', strtotime("$BeginDate +1 month -1 day"));
 
-            $start_date = $year . '-' . $month . '-16';
-            $end_date = $year . '-' . $month . '-' . $EndDate;
-        }
+        //     $start_date = $year . '-' . $month . '-16';
+        //     $end_date = $year . '-' . $month . '-' . $EndDate;
+        // }
 
         // $sql = 'WorkLoad_OrdDate, WorkLoad_Type, WorkLoad_PatDep_DR->CTLOC_Desc billing_dep, WorkLoad_ResDoc_DR->CTPCP_Code, WorkLoad_ResDoc_DR->CTPCP_Desc, WorkLoad_RecDep_DR->CTLOC_Desc receive_dep, WorkLoad_OEORE_Dr->OEORE_CTPCP_DR->CTPCP_Desc, WorkLoad_ResDep_DR->CTLOC_Desc patient_dep, WorkLoad_TarSC_Dr->TARSC_Desc charge_subclass, WorkLoad_TarItem_DR->TARI_Code, WorkLoad_TarItem_DR->TARI_Desc, sum(WorkLoad_Quantity) num, sum(WorkLoad_TotalPrice) money';
 
@@ -142,6 +145,7 @@ class Incomes extends Command
             $charge_subclass = $charge_subclass_all[$charge_subclass] ?? $charge_subclass ?? '';
 
             $data[] = [
+                'date' => $date,
                 'year' => $year,
                 'month' => $month,
                 'type' => $type,
@@ -170,6 +174,7 @@ class Incomes extends Command
                 $billing_data[$billing_key]['money'] += $value['money'];
             } else {
                 $billing_data[$billing_key] = [
+                    'date' => $value['date'],
                     'year' => $value['year'],
                     'month' => $value['month'],
                     'type' => $value['type'],
@@ -189,6 +194,7 @@ class Incomes extends Command
                 $receive_data[$receive_key]['money'] += $value['money'];
             } else {
                 $receive_data[$receive_key] = [
+                    'date' => $value['date'],
                     'year' => $value['year'],
                     'month' => $value['month'],
                     'type' => $value['type'],
@@ -204,7 +210,7 @@ class Incomes extends Command
         unset($data);
 
         // 开单数据入库
-        BillingIncome::where('year', $year)->where('month', $month)->where('type', $type)->delete();
+        BillingIncome::where('date', $date)->where('type', $type)->delete();
         foreach ($billing_data as $key => $value) {
             BillingIncome::create($value);
         }
@@ -212,7 +218,7 @@ class Incomes extends Command
         unset($billing_data);
 
         // 接单数据入库
-        ReceiveIncome::where('year', $year)->where('month', $month)->where('type', $type)->delete();
+        ReceiveIncome::where('date', $date)->where('type', $type)->delete();
         foreach ($receive_data as $key => $value) {
             ReceiveIncome::create($value);
         }
