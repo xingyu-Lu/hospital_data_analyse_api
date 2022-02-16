@@ -62,6 +62,50 @@ class ReceiveIncomesController extends Controller
 
         $res_data = array_values($res_data);
 
+        // 加同环比
+        foreach ($res_data as $key => &$value) {
+            // 环比
+            $sequential_data = ReceiveIncome::where('date', strtotime('-1 month', strtotime($value['date'])))->where('receive_dep', $value['receive_dep'])->where('charge_subclass', $value['charge_subclass'])->sum('money');
+            if ($sequential_data) {
+                $sequential = bcdiv($value['money'] - $sequential_data, $sequential_data, 2);
+            } else {
+                $sequential = '';
+            }
+            $value['sequential'] = $sequential;
+
+            // 同比
+            $compare_same_data = ReceiveIncome::where('date', strtotime('-1 year', strtotime($value['date'])))->where('receive_dep', $value['receive_dep'])->where('charge_subclass', $value['charge_subclass'])->sum('money');
+            if ($compare_same_data) {
+                $compare_same = bcdiv($value['money'] - $compare_same_data, $compare_same_data, 2);
+            } else {
+                $compare_same = '';
+            }
+            
+            $value['compare_same'] = $compare_same;            
+        }
+        unset($value);
+
+        // 加合计
+        $all_num = array_sum(array_column($res_data, 'num'));
+        $all_money = 0;
+        $all_money_all = array_column($res_data, 'money');
+        foreach ($all_money_all as $key => $value) {
+            $all_money = bcadd($all_money, $value, 2);
+        }
+
+        $res_data[] = [
+            'year' => '',
+            'month' => '',
+            'date' => '合计',
+            'receive_dep' => '',
+            'patient_dep' => '',
+            'charge_subclass' => '',
+            'num' => $all_num,
+            'money' => $all_money,
+            'sequential' => '',
+            'compare_same' => ''
+        ];
+
         //实例化Excel
         $spreadsheet = new Spreadsheet();
         $spreadsheet->getActiveSheet()->getDefaultColumnDimension()->setWidth(18);
@@ -70,7 +114,7 @@ class ReceiveIncomesController extends Controller
         $worksheet->setTitle($office_name . '-接单收入');
 
         $head_arr = [
-            '日期', '接收科室', '病人科室', '收费项目', '数量', '金额'
+            '日期', '接收科室', '病人科室', '收费项目', '数量', '金额', '环比', '同比'
         ];
 
         foreach ($head_arr as $key => $value) {
@@ -84,6 +128,8 @@ class ReceiveIncomesController extends Controller
             $worksheet->setCellValueByColumnAndRow(4, $key+2, $value['charge_subclass']);
             $worksheet->setCellValueByColumnAndRow(5, $key+2, $value['num']);
             $worksheet->setCellValueByColumnAndRow(6, $key+2, $value['money']);
+            $worksheet->setCellValueByColumnAndRow(7, $key+2, $value['sequential']);
+            $worksheet->setCellValueByColumnAndRow(8, $key+2, $value['compare_same']);
         }
 
          //下载
@@ -154,6 +200,29 @@ class ReceiveIncomesController extends Controller
 
         $res_data = array_values($res_data);
 
+        // 加同环比
+        foreach ($res_data as $key => &$value) {
+            // 环比
+            $sequential_data = ReceiveIncome::where('date', strtotime('-1 month', strtotime($value['date'])))->where('receive_dep', $value['receive_dep'])->where('charge_subclass', $value['charge_subclass'])->sum('money');
+            if ($sequential_data) {
+                $sequential = bcdiv($value['money'] - $sequential_data, $sequential_data, 2);
+            } else {
+                $sequential = '';
+            }
+            $value['sequential'] = $sequential;
+
+            // 同比
+            $compare_same_data = ReceiveIncome::where('date', strtotime('-1 year', strtotime($value['date'])))->where('receive_dep', $value['receive_dep'])->where('charge_subclass', $value['charge_subclass'])->sum('money');
+            if ($compare_same_data) {
+                $compare_same = bcdiv($value['money'] - $compare_same_data, $compare_same_data, 2);
+            } else {
+                $compare_same = '';
+            }
+            
+            $value['compare_same'] = $compare_same;            
+        }
+        unset($value);
+
         $date_arr = array_values(array_unique(array_column($res_data, 'date')));
         $title = $office_name;
         $legend_arr = array_unique(array_column($res_data, 'charge_subclass'));
@@ -191,6 +260,27 @@ class ReceiveIncomesController extends Controller
                 'data' => $money_arr[$value],
             ];
         }
+
+        // 加合计
+        $all_num = array_sum(array_column($res_data, 'num'));
+        $all_money = 0;
+        $all_money_all = array_column($res_data, 'money');
+        foreach ($all_money_all as $key => $value) {
+            $all_money = bcadd($all_money, $value, 2);
+        }
+
+        $res_data[] = [
+            'year' => '',
+            'month' => '',
+            'date' => '合计',
+            'billing_dep' => '',
+            'patient_dep' => '',
+            'charge_subclass' => '',
+            'num' => $all_num,
+            'money' => $all_money,
+            'sequential' => '',
+            'compare_same' => ''
+        ];
 
         $res_data = [
             'data' => $res_data,
