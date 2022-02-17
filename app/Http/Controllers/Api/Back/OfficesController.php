@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Back;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\OfficeContrast;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class OfficesController extends Controller
@@ -15,7 +17,17 @@ class OfficesController extends Controller
      */
     public function index()
     {
-        $office = OfficeContrast::select('value')->distinct()->get()->toArray();
+        $user = auth('api')->user();
+
+        $root = $user->hasRole(Role::ROOT, app(Admin::class)->guardName());
+
+        if ($root) {
+            $office = OfficeContrast::select('value')->distinct()->get()->toArray();
+        } else {
+            $office = [
+                ['value' => $user['name']]
+            ];
+        }
 
         return responder()->success($office);
     }
