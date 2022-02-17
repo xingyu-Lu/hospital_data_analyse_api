@@ -21,6 +21,12 @@ class AdminsSeeder extends Seeder
         $office = OfficeContrast::select('value')->distinct()->get()->toArray();
 
         foreach ($office as $key => $value) {
+            $admin = Admin::where('name', $value['value'])->first();
+
+            if ($admin) {
+                continue;
+            }
+
             $insert_data = [
                 'name' => $value['value'],
                 'password' => md5(123456),
