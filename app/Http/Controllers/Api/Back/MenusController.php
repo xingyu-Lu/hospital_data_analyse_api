@@ -56,7 +56,7 @@ class MenusController extends Controller
 
         $list = [];
 
-        $menus = Menu::where('pid', $pid)->get()->toArray();
+        $menus = Menu::where('pid', $pid)->where('is_enabled', Menu::IS_ENABLED_1)->get()->toArray();
 
         foreach ($menus as $key => $value) {
             $list[$key]['id'] = $value['id'];
