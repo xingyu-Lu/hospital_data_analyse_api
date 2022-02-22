@@ -23,8 +23,17 @@ class OfficesController extends Controller
 
         if ($root) {
             $office = OfficeContrast::select('value')->distinct()->get()->toArray();
+            $arr = ['value' => '全院'];
+
+            array_unshift($office, $arr);
+            array_pop($office);
+
+            // array_walk($arr, function($item) use ($office) {
+            //     array_unshift($office, $item);
+            // });
         } else {
             $office = [
+                ['value' => '全院'],
                 ['value' => $user['name']]
             ];
         }

@@ -209,9 +209,181 @@ class Incomes extends Command
 
         unset($data);
 
+        $billing_insert_data = $receive_insert_data = [];
+        // 准备开单入库数据
+        foreach ($billing_data as $key => $value) {
+            $billing_insert_key = $value['billing_dep'] . '-' . $value['patient_dep'];
+            if (isset($billing_insert_data[$billing_insert_key])) {
+                switch ($value['charge_subclass']) {
+                    case '病理学诊断收入':
+                        $billing_insert_data[$billing_insert_key]['pathology_income'] = $value['money'];
+                        break;
+                    case '材料费收入':
+                        $billing_insert_data[$billing_insert_key]['material_income'] = $value['money'];
+                        break;
+                    case '超声检查收入':
+                        $billing_insert_data[$billing_insert_key]['ultrasound_income'] = $value['money'];
+                        break;
+                    case '放射检查收入':
+                        $billing_insert_data[$billing_insert_key]['radiation_income'] = $value['money'];
+                        break;
+                    case '检查费收入':
+                        $billing_insert_data[$billing_insert_key]['check_income'] = $value['money'];
+                        break;
+                    case '检验收入':
+                        $billing_insert_data[$billing_insert_key]['checkout_income'] = $value['money'];
+                        break;
+                    case '手术项目收入':
+                        $billing_insert_data[$billing_insert_key]['surgery_income'] = $value['money'];
+                        break;
+                    case '西药费收入':
+                        $billing_insert_data[$billing_insert_key]['xiyao_income'] = $value['money'];
+                        break;
+                    case '一般医疗服务收入':
+                        $billing_insert_data[$billing_insert_key]['general_medical_income'] = $value['money'];
+                        break;
+                    case '中药收入':
+                        $billing_insert_data[$billing_insert_key]['zhongyao_income'] = $value['money'];
+                        break;
+                }
+                $billing_insert_data[$billing_insert_key]['total_money'] += $value['money'];
+            } else {
+                $billing_insert_data[$billing_insert_key] = [
+                    'date' => $value['date'],
+                    'year' => $value['year'],
+                    'month' => $value['month'],
+                    'type' => $value['type'],
+                    'billing_dep' => $value['billing_dep'],
+                    'patient_dep' => $value['patient_dep'],
+                    'total_money' => 0
+                ];
+
+                switch ($value['charge_subclass']) {
+                    case '病理学诊断收入':
+                        $billing_insert_data[$billing_insert_key]['pathology_income'] = $value['money'];
+                        break;
+                    case '材料费收入':
+                        $billing_insert_data[$billing_insert_key]['material_income'] = $value['money'];
+                        break;
+                    case '超声检查收入':
+                        $billing_insert_data[$billing_insert_key]['ultrasound_income'] = $value['money'];
+                        break;
+                    case '放射检查收入':
+                        $billing_insert_data[$billing_insert_key]['radiation_income'] = $value['money'];
+                        break;
+                    case '检查费收入':
+                        $billing_insert_data[$billing_insert_key]['check_income'] = $value['money'];
+                        break;
+                    case '检验收入':
+                        $billing_insert_data[$billing_insert_key]['checkout_income'] = $value['money'];
+                        break;
+                    case '手术项目收入':
+                        $billing_insert_data[$billing_insert_key]['surgery_income'] = $value['money'];
+                        break;
+                    case '西药费收入':
+                        $billing_insert_data[$billing_insert_key]['xiyao_income'] = $value['money'];
+                        break;
+                    case '一般医疗服务收入':
+                        $billing_insert_data[$billing_insert_key]['general_medical_income'] = $value['money'];
+                        break;
+                    case '中药收入':
+                        $billing_insert_data[$billing_insert_key]['zhongyao_income'] = $value['money'];
+                        break;
+                }
+                $billing_insert_data[$billing_insert_key]['total_money'] += $value['money'];
+            }
+        }
+        unset($billing_data);
+
+        // 准备接单入库数据
+        foreach ($receive_data as $key => $value) {
+            $receive_insert_key = $value['receive_dep'] . '-' . $value['patient_dep'];
+            if (isset($receive_insert_data[$receive_insert_key])) {
+                switch ($value['charge_subclass']) {
+                    case '病理学诊断收入':
+                        $receive_insert_data[$receive_insert_key]['pathology_income'] = $value['money'];
+                        break;
+                    case '材料费收入':
+                        $receive_insert_data[$receive_insert_key]['material_income'] = $value['money'];
+                        break;
+                    case '超声检查收入':
+                        $receive_insert_data[$receive_insert_key]['ultrasound_income'] = $value['money'];
+                        break;
+                    case '放射检查收入':
+                        $receive_insert_data[$receive_insert_key]['radiation_income'] = $value['money'];
+                        break;
+                    case '检查费收入':
+                        $receive_insert_data[$receive_insert_key]['check_income'] = $value['money'];
+                        break;
+                    case '检验收入':
+                        $receive_insert_data[$receive_insert_key]['checkout_income'] = $value['money'];
+                        break;
+                    case '手术项目收入':
+                        $receive_insert_data[$receive_insert_key]['surgery_income'] = $value['money'];
+                        break;
+                    case '西药费收入':
+                        $receive_insert_data[$receive_insert_key]['xiyao_income'] = $value['money'];
+                        break;
+                    case '一般医疗服务收入':
+                        $receive_insert_data[$receive_insert_key]['general_medical_income'] = $value['money'];
+                        break;
+                    case '中药收入':
+                        $receive_insert_data[$receive_insert_key]['zhongyao_income'] = $value['money'];
+                        break;
+                }
+                $receive_insert_data[$receive_insert_key]['total_money'] += $value['money'];
+            } else {
+                $receive_insert_data[$receive_insert_key] = [
+                    'date' => $value['date'],
+                    'year' => $value['year'],
+                    'month' => $value['month'],
+                    'type' => $value['type'],
+                    'receive_dep' => $value['receive_dep'],
+                    'patient_dep' => $value['patient_dep'],
+                    'total_money' => 0,
+                ];
+
+                switch ($value['charge_subclass']) {
+                    case '病理学诊断收入':
+                        $receive_insert_data[$receive_insert_key]['pathology_income'] = $value['money'];
+                        break;
+                    case '材料费收入':
+                        $receive_insert_data[$receive_insert_key]['material_income'] = $value['money'];
+                        break;
+                    case '超声检查收入':
+                        $receive_insert_data[$receive_insert_key]['ultrasound_income'] = $value['money'];
+                        break;
+                    case '放射检查收入':
+                        $receive_insert_data[$receive_insert_key]['radiation_income'] = $value['money'];
+                        break;
+                    case '检查费收入':
+                        $receive_insert_data[$receive_insert_key]['check_income'] = $value['money'];
+                        break;
+                    case '检验收入':
+                        $receive_insert_data[$receive_insert_key]['checkout_income'] = $value['money'];
+                        break;
+                    case '手术项目收入':
+                        $receive_insert_data[$receive_insert_key]['surgery_income'] = $value['money'];
+                        break;
+                    case '西药费收入':
+                        $receive_insert_data[$receive_insert_key]['xiyao_income'] = $value['money'];
+                        break;
+                    case '一般医疗服务收入':
+                        $receive_insert_data[$receive_insert_key]['general_medical_income'] = $value['money'];
+                        break;
+                    case '中药收入':
+                        $receive_insert_data[$receive_insert_key]['zhongyao_income'] = $value['money'];
+                        break;
+                }
+                $receive_insert_data[$receive_insert_key]['total_money'] += $value['money'];
+            }
+        }
+        unset($receive_data);
+
+
         // 开单数据入库
         BillingIncome::where('date', $date)->where('type', $type)->delete();
-        foreach ($billing_data as $key => $value) {
+        foreach ($billing_insert_data as $key => $value) {
             BillingIncome::create($value);
         }
 
@@ -219,7 +391,7 @@ class Incomes extends Command
 
         // 接单数据入库
         ReceiveIncome::where('date', $date)->where('type', $type)->delete();
-        foreach ($receive_data as $key => $value) {
+        foreach ($receive_insert_data as $key => $value) {
             ReceiveIncome::create($value);
         }
 
