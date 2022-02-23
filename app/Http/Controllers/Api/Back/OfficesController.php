@@ -15,29 +15,42 @@ class OfficesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $params = $request->all();
+
         $user = auth('api')->user();
 
         $root = $user->hasRole(Role::ROOT, app(Admin::class)->guardName());
 
         if ($root) {
             $office = OfficeContrast::select('value')->distinct()->get()->toArray();
-            $arr = ['value' => '全院'];
-            $arr_1 = ['value' => '全院(临床)'];
 
-            array_unshift($office, $arr, $arr_1);
-            array_pop($office);
+            if (isset($params['type']) && $params['type'] == 1) {
+                $arr = ['value' => '全院'];
+                $arr_1 = ['value' => '全院(临床)'];
 
-            // array_walk($arr, function($item) use ($office) {
-            //     array_unshift($office, $item);
-            // });
+                array_unshift($office, $arr, $arr_1);
+                array_pop($office);
+            } else {
+                $arr = ['value' => '全院'];
+
+                array_unshift($office, $arr);
+                array_pop($office);
+            }
         } else {
-            $office = [
-                ['value' => '全院'],
-                ['value' => '全院(临床)'],
-                ['value' => $user['name']]
-            ];
+            if (isset($params['type']) && $params['type'] == 1) {
+                $office = [
+                    ['value' => '全院'],
+                    ['value' => '全院(临床)'],
+                    ['value' => $user['name']]
+                ];
+            } else {
+                $office = [
+                    ['value' => '全院'],
+                    ['value' => $user['name']]
+                ];
+            }
         }
 
         return responder()->success($office);
