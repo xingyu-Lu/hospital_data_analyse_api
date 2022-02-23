@@ -35,7 +35,7 @@ class ContrastsSeeder extends Seeder
         $highestRow = $worksheet->getHighestRow();
         //总列数
         $highestColumn = $worksheet->getHighestColumn();
-        $highestColumn = 'B';
+        $highestColumn = 'C';
         $highestColumn = Coordinate::columnIndexFromString($highestColumn);
 
         // 清空数据
@@ -49,9 +49,16 @@ class ContrastsSeeder extends Seeder
         }
 
         foreach ($data as $key => $value) {
+            if ($value[2] == '非临床科室') {
+                $type = 0;
+            } else {
+                $type = 1;
+            }
+
             $insert_data = [
                 'key' => $value[0],
                 'value' => $value[1],
+                'type' => $type,
             ];
 
             OfficeContrast::create($insert_data);

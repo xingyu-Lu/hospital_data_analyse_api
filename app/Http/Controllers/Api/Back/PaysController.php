@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Back;
 
 use App\Http\Controllers\Controller;
+use App\Models\OfficeContrast;
 use App\Models\Pay;
 use Illuminate\Http\Request;
 
@@ -33,10 +34,13 @@ class PaysController extends Controller
             $where[] = ['dep', '=', $office_name];
         }
 
+        // 临床科室
+        $office_lc = OfficeContrast::distinct()->where('type', 1)->pluck('value');
+
         $pay = Pay::where($where);
 
         if ($office_name == '全院(临床)') {
-            $pay = Pay::where($where)->whereIn('dep', ['口腔科']);
+            $pay = Pay::where($where)->whereIn('dep', $office_lc);
         }
 
         $pay = $pay->orderBy('date', 'asc')->get()->toArray();
@@ -153,7 +157,7 @@ class PaysController extends Controller
             ['date', '>=', $start_date],
             ['date', '<=', $end_date],
         ];
-        $pay_qy_lc = Pay::where($where_qy_lc)->whereIn('dep', ['口腔科'])->orderBy('date', 'asc')->get()->toArray();
+        $pay_qy_lc = Pay::where($where_qy_lc)->whereIn('dep', $office_lc)->orderBy('date', 'asc')->get()->toArray();
 
         foreach ($pay_qy_lc as $key => $value) {
             $select_key = $value['date'];

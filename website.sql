@@ -38,6 +38,7 @@ CREATE TABLE `syy_office_contrasts` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
   `key` varchar(50) NOT NULL DEFAULT '' COMMENT 'key',
   `value` varchar(50) NOT NULL DEFAULT '' COMMENT 'value',
+  `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '0：非临床科室 1：临床科室',
   `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
