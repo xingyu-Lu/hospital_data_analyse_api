@@ -68,6 +68,8 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 ## 3.执行创建root角色并赋给超级管理员 php artisan db:seed --class=InitRolesPermissionsAdminsSeeder
 ## 4.storage 开777权限：chmod -R 777 storage/
 
-## 写入收入定时任务 php artisan incomes:incomes
+## 收入任务 php artisan incomes:incomes
+## 支出任务 php artisan pays:pays
+
 ## 添加权限 php artisan db:seed --class=PermissionsSeeder
 ## 初始化管理员 php artisan db:seed --class=AdminsSeeder

@@ -27,16 +27,8 @@ class OfficesController extends Controller
             $office = OfficeContrast::select('value')->distinct()->get()->toArray();
 
             if (isset($params['type']) && $params['type'] == 1) {
-                $arr = ['value' => '全院'];
-                $arr_1 = ['value' => '全院(临床)'];
-
-                array_unshift($office, $arr, $arr_1);
-                array_pop($office);
-            } else {
-                $arr = ['value' => '全院'];
-
-                array_unshift($office, $arr);
-                array_pop($office);
+                $arr = ['value' => '全院(临床)'];
+                array_push($office, $arr);
             }
         } else {
             if (isset($params['type']) && $params['type'] == 1) {
