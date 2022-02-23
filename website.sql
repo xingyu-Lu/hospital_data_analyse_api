@@ -119,3 +119,21 @@ CREATE TABLE `syy_receive_incomes` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='接单收入表';
 
+DROP TABLE IF EXISTS `syy_pays`;
+CREATE TABLE `syy_pays` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
+  `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
+  `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
+  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月 2：整月',
+  `dep` varchar(50) NOT NULL DEFAULT '' COMMENT '科室',
+  `personnel_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '人员经费',
+  `fixed_asset_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '固定资产折旧费',
+  `material_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '卫生材料费',
+  `medicine_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '药品费',
+  `other_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '其他费用',
+  `total_money` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '总金额',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='支出表';

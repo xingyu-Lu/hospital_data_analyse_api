@@ -16,6 +16,14 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
+                'content' => '支出明细导数据，加支出明细，等等',
+                'timestamp' => '2022-02-22',
+            ],
+            [
+                'content' => '开单收入，接单收入重构，加饼图、折线图，等等',
+                'timestamp' => '2022-02-21',
+            ],
+            [
                 'content' => '了解需求，重构数据库，重构导入数据，等等',
                 'timestamp' => '2022-02-21',
             ],

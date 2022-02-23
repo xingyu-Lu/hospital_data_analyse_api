@@ -58,5 +58,9 @@ Route::namespace('Api\Back')->prefix('back')->group(function () {
 
         // 科室列表
         Route::apiResource('offices', 'OfficesController');
+
+        // 支出费用
+        Route::get('pays/export', 'PaysController@export')->name('pays/export');
+        Route::apiResource('pays', 'PaysController');
     });
 });
