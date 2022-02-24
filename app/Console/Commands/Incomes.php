@@ -18,7 +18,7 @@ class Incomes extends Command
      *
      * @var string
      */
-    protected $signature = 'incomes:incomes {year_month?},,{type?}';
+    protected $signature = 'incomes:incomes {year_month?} {type?}';
 
     /**
      * The console command description.

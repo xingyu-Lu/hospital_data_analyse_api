@@ -16,7 +16,7 @@ class Pays extends Command
      *
      * @var string
      */
-    protected $signature = 'pays:pays {year_month?},,{type?}';
+    protected $signature = 'pays:pays {year_month?} {type?}';
 
     /**
      * The console command description.

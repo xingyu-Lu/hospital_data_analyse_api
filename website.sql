@@ -138,3 +138,45 @@ CREATE TABLE `syy_pays` (
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='支出表';
+
+DROP TABLE IF EXISTS `syy_indicators`;
+CREATE TABLE `syy_indicators` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
+  `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
+  `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
+  `dep` varchar(50) NOT NULL DEFAULT '' COMMENT '科室',
+  `billing_income` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '开单收入',
+  `direct_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '直接成本',
+  `balance` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '收支结余',
+  `balance_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '结余率',
+  `drug_income` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '药品收入',
+  `consumable_income` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '耗材收入',
+  `drug_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '药品支出',
+  `consumable_pay` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '耗材支出',
+  `drug_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '药占比',
+  `consumable_rate` varchar(20) NOT NULL DEFAULT '' COMMENT '耗占比',
+  `drug_profit` varchar(20) NOT NULL DEFAULT '' COMMENT '药品利润',
+  `consumable_profit` varchar(20) NOT NULL DEFAULT '' COMMENT '耗材利润',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='重点指标表';
+
+DROP TABLE IF EXISTS `syy_cost_controls`;
+CREATE TABLE `syy_cost_controls` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
+  `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
+  `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
+  `dep` varchar(50) NOT NULL DEFAULT '' COMMENT '科室',
+  `personnel_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '人员经费成本',
+  `consumable_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '耗材支出成本',
+  `drug_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '药品费成本',
+  `fixed_asset_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '固定资产折旧费成本',
+  `other_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '其他支出成本',
+  `total_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '合计成本',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='成本控制及工作量表';

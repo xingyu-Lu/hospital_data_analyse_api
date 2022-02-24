@@ -16,7 +16,15 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
-                'content' => '支出明细导数据，加支出明细，等等',
+                'content' => '重点指标任务脚本，成本控制任务脚本等等',
+                'timestamp' => '2022-02-24',
+            ],
+            [
+                'content' => '指标篇需求分析，建表，重点指标任务脚本部分等等',
+                'timestamp' => '2022-02-23',
+            ],
+            [
+                'content' => '支出明细导数据，加支出明细，科室区分临床与非临床等等',
                 'timestamp' => '2022-02-22',
             ],
             [

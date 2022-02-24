@@ -24,7 +24,13 @@ class OfficesController extends Controller
         $root = $user->hasRole(Role::ROOT, app(Admin::class)->guardName());
 
         if ($root) {
-            $office = OfficeContrast::select('value')->distinct()->get()->toArray();
+            $where = [];
+            if (isset($params['is_lc']) && $params['is_lc'] == 1) {
+                $where[] = [
+                    'type', '=', 1
+                ];
+            }
+            $office = OfficeContrast::select('value')->distinct()->where($where)->get()->toArray();
 
             if (isset($params['type']) && $params['type'] == 1) {
                 $arr = ['value' => '全院(临床)'];

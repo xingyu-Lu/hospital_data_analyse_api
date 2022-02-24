@@ -30,7 +30,7 @@ class ReceiveIncomesController extends Controller
             $where[] = ['receive_dep', '=', $office_name];
         }
 
-        $receive_income = ReceiveIncome::where($where)->orderBy('date', 'desc')->get()->toArray();
+        $receive_income = ReceiveIncome::where($where)->orderBy('date', 'asc')->get()->toArray();
 
         $res_data = $last_res_data = [];
 
@@ -218,7 +218,7 @@ class ReceiveIncomesController extends Controller
             $where[] = ['receive_dep', '=', $office_name];
         }
 
-        $receive_income = ReceiveIncome::where($where)->orderBy('date', 'desc')->get()->toArray();
+        $receive_income = ReceiveIncome::where($where)->orderBy('date', 'asc')->get()->toArray();
 
         $res_data = $last_res_data = [];
 
