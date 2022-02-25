@@ -51,7 +51,9 @@ class IndicatorsController extends Controller
             $balance_total = bcadd($balance_total, $value, 2);
         }
 
-        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
+        if ($billing_income_total > 0) {
+            $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
+        }
 
         $drug_income_arr = array_column($indicator_data, 'drug_income');
         foreach ($drug_income_arr as $key => $value) {
@@ -73,9 +75,13 @@ class IndicatorsController extends Controller
             $consumable_pay_total = bcadd($consumable_pay_total, $value, 2);
         }
 
-        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
+        if ($billing_income_total > 0) {
+            $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
+        }
 
-        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
+        if (($billing_income_total-$drug_income_total) > 0) {
+            $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
+        }
 
         $drug_profit_arr = array_column($indicator_data, 'drug_profit');
         foreach ($drug_profit_arr as $key => $value) {
@@ -194,7 +200,9 @@ class IndicatorsController extends Controller
             $balance_total = bcadd($balance_total, $value, 2);
         }
 
-        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
+        if ($billing_income_total > 0) {
+            $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
+        }
 
         $drug_income_arr = array_column($indicator_data, 'drug_income');
         foreach ($drug_income_arr as $key => $value) {
@@ -216,9 +224,13 @@ class IndicatorsController extends Controller
             $consumable_pay_total = bcadd($consumable_pay_total, $value, 2);
         }
 
-        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
+        if ($billing_income_total > 0) {
+            $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
+        }
 
-        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
+        if (($billing_income_total-$drug_income_total) > 0) {
+            $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
+        }
 
         $drug_profit_arr = array_column($indicator_data, 'drug_profit');
         foreach ($drug_profit_arr as $key => $value) {
