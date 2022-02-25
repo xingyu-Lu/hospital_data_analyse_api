@@ -28,57 +28,61 @@ class IndicatorsController extends Controller
         ];
 
         $indicator_data = Indicator::where($where)->orderBy('date', 'asc')->get()->toArray();
+        foreach ($indicator_data as $key => &$value) {
+            $value['date'] = date('Y-m', $value['date']);
+        }
+        unset($value);
 
         // 合计
         $billing_income_total = $direct_cost_total = $balance_total = $balance_rate_total = $drug_income_total = $consumable_income_total = $drug_pay_total = $consumable_pay_total = $drug_rate_total = $consumable_rate_total = $drug_profit_total = $consumable_profit_total = 0;
 
-        $billing_income_arr = array_values($indicator_data, 'billing_income');
+        $billing_income_arr = array_column($indicator_data, 'billing_income');
         foreach ($billing_income_arr as $key => $value) {
             $billing_income_total = bcadd($billing_income_total, $value, 2);
         }
 
-        $direct_cost_arr = array_values($indicator_data, 'direct_cost');
+        $direct_cost_arr = array_column($indicator_data, 'direct_cost');
         foreach ($direct_cost_arr as $key => $value) {
             $direct_cost_total = bcadd($direct_cost_total, $value, 2);
         }
 
-        $balance_arr = array_values($indicator_data, 'balance');
+        $balance_arr = array_column($indicator_data, 'balance');
         foreach ($balance_arr as $key => $value) {
             $balance_total = bcadd($balance_total, $value, 2);
         }
 
-        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 2);
+        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
 
-        $drug_income_arr = array_values($indicator_data, 'drug_income');
+        $drug_income_arr = array_column($indicator_data, 'drug_income');
         foreach ($drug_income_arr as $key => $value) {
             $drug_income_total = bcadd($drug_income_total, $value, 2);
         }
 
-        $consumable_income_arr = array_values($indicator_data, 'consumable_income');
+        $consumable_income_arr = array_column($indicator_data, 'consumable_income');
         foreach ($consumable_income_arr as $key => $value) {
             $consumable_income_total = bcadd($consumable_income_total, $value, 2);
         }
 
-        $drug_pay_arr = array_values($indicator_data, 'drug_pay');
+        $drug_pay_arr = array_column($indicator_data, 'drug_pay');
         foreach ($drug_pay_arr as $key => $value) {
             $drug_pay_total = bcadd($drug_pay_total, $value, 2);
         }
 
-        $consumable_pay_arr = array_values($indicator_data, 'consumable_pay');
+        $consumable_pay_arr = array_column($indicator_data, 'consumable_pay');
         foreach ($consumable_pay_arr as $key => $value) {
             $consumable_pay_total = bcadd($consumable_pay_total, $value, 2);
         }
 
-        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 2);
+        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
 
-        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 2);
+        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
 
-        $drug_profit_arr = array_values($indicator_data, 'drug_profit');
+        $drug_profit_arr = array_column($indicator_data, 'drug_profit');
         foreach ($drug_profit_arr as $key => $value) {
             $drug_profit_total = bcadd($drug_profit_total, $value, 2);
         }
 
-        $consumable_profit_arr = array_values($indicator_data, 'consumable_profit');
+        $consumable_profit_arr = array_column($indicator_data, 'consumable_profit');
         foreach ($consumable_profit_arr as $key => $value) {
             $consumable_profit_total = bcadd($consumable_profit_total, $value, 2);
         }
@@ -117,7 +121,7 @@ class IndicatorsController extends Controller
             $worksheet->setCellValueByColumnAndRow($key+1, 1, $value);
         }
 
-        foreach ($res_data as $key => $value) {
+        foreach ($indicator_data as $key => $value) {
             $worksheet->setCellValueByColumnAndRow(1, $key+2, $value['date']);
             $worksheet->setCellValueByColumnAndRow(2, $key+2, $value['billing_income']);
             $worksheet->setCellValueByColumnAndRow(3, $key+2, $value['direct_cost']);
@@ -167,57 +171,61 @@ class IndicatorsController extends Controller
         ];
 
         $indicator_data = Indicator::where($where)->orderBy('date', 'asc')->get()->toArray();
+        foreach ($indicator_data as $key => &$value) {
+            $value['date'] = date('Y-m', $value['date']);
+        }
+        unset($value);
 
         // 合计
         $billing_income_total = $direct_cost_total = $balance_total = $balance_rate_total = $drug_income_total = $consumable_income_total = $drug_pay_total = $consumable_pay_total = $drug_rate_total = $consumable_rate_total = $drug_profit_total = $consumable_profit_total = 0;
 
-        $billing_income_arr = array_values($indicator_data, 'billing_income');
+        $billing_income_arr = array_column($indicator_data, 'billing_income');
         foreach ($billing_income_arr as $key => $value) {
             $billing_income_total = bcadd($billing_income_total, $value, 2);
         }
 
-        $direct_cost_arr = array_values($indicator_data, 'direct_cost');
+        $direct_cost_arr = array_column($indicator_data, 'direct_cost');
         foreach ($direct_cost_arr as $key => $value) {
             $direct_cost_total = bcadd($direct_cost_total, $value, 2);
         }
 
-        $balance_arr = array_values($indicator_data, 'balance');
+        $balance_arr = array_column($indicator_data, 'balance');
         foreach ($balance_arr as $key => $value) {
             $balance_total = bcadd($balance_total, $value, 2);
         }
 
-        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 2);
+        $balance_rate_total = bcdiv($balance_total, $billing_income_total, 4)*100 . '%';
 
-        $drug_income_arr = array_values($indicator_data, 'drug_income');
+        $drug_income_arr = array_column($indicator_data, 'drug_income');
         foreach ($drug_income_arr as $key => $value) {
             $drug_income_total = bcadd($drug_income_total, $value, 2);
         }
 
-        $consumable_income_arr = array_values($indicator_data, 'consumable_income');
+        $consumable_income_arr = array_column($indicator_data, 'consumable_income');
         foreach ($consumable_income_arr as $key => $value) {
             $consumable_income_total = bcadd($consumable_income_total, $value, 2);
         }
 
-        $drug_pay_arr = array_values($indicator_data, 'drug_pay');
+        $drug_pay_arr = array_column($indicator_data, 'drug_pay');
         foreach ($drug_pay_arr as $key => $value) {
             $drug_pay_total = bcadd($drug_pay_total, $value, 2);
         }
 
-        $consumable_pay_arr = array_values($indicator_data, 'consumable_pay');
+        $consumable_pay_arr = array_column($indicator_data, 'consumable_pay');
         foreach ($consumable_pay_arr as $key => $value) {
             $consumable_pay_total = bcadd($consumable_pay_total, $value, 2);
         }
 
-        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 2);
+        $drug_rate_total = bcdiv($drug_income_total, $billing_income_total, 4)*100 . '%';
 
-        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 2);
+        $consumable_rate_total = bcdiv($consumable_pay_total, ($billing_income_total-$drug_income_total), 4)*100 . '%';
 
-        $drug_profit_arr = array_values($indicator_data, 'drug_profit');
+        $drug_profit_arr = array_column($indicator_data, 'drug_profit');
         foreach ($drug_profit_arr as $key => $value) {
             $drug_profit_total = bcadd($drug_profit_total, $value, 2);
         }
 
-        $consumable_profit_arr = array_values($indicator_data, 'consumable_profit');
+        $consumable_profit_arr = array_column($indicator_data, 'consumable_profit');
         foreach ($consumable_profit_arr as $key => $value) {
             $consumable_profit_total = bcadd($consumable_profit_total, $value, 2);
         }

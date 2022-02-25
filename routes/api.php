@@ -62,5 +62,13 @@ Route::namespace('Api\Back')->prefix('back')->group(function () {
         // 支出费用
         Route::get('pays/export', 'PaysController@export')->name('pays/export');
         Route::apiResource('pays', 'PaysController');
+
+        // 重点指标
+        Route::get('indicators/export', 'IndicatorsController@export')->name('indicators/export');
+        Route::apiResource('indicators', 'IndicatorsController');
+
+        // 成本控制
+        Route::get('costControls/export', 'CostControlsController@export')->name('costControls/export');
+        Route::apiResource('costControls', 'CostControlsController');
     });
 });

@@ -76,6 +76,10 @@ class MenusController extends Controller
         $menus_id = DB::table('role_has_menus')->select('menu_id')->whereIn('role_id', $roles_id)->get()->toArray();
 
         $menus_id = array_column($menus_id, 'menu_id');
+
+        $pids = Menu::whereIn('id', $menus_id)->where('pid', '<>', 0)->pluck('pid')->toArray();
+
+        $menus_id = array_merge($menus_id, $pids);
         
         $menus = Menu::whereIn('id', $menus_id)->where('is_enabled', Menu::IS_ENABLED_1)->get()->toArray();
 

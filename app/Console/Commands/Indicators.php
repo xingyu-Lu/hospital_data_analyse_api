@@ -130,7 +130,7 @@ class Indicators extends Command
             $direct_cost = $pay_data[0]['total_money'] ?? 0;
             $balance = bcsub($billing_income, $direct_cost, 2);
             if ($billing_income > 0) {
-                $balance_rate = bcdiv($balance, $billing_income, 2);
+                $balance_rate = bcdiv($balance, $billing_income, 4)*100 . '%';
             } else {
                 $balance_rate = 0;
             }
@@ -139,12 +139,12 @@ class Indicators extends Command
             $drug_pay = $pay_data[0]['medicine_pay'] ?? 0;
             $consumable_pay = $pay_data[0]['material_pay'] ?? 0;
             if ($billing_income > 0) {
-                $drug_rate = bcdiv($drug_income, $billing_income, 2);
+                $drug_rate = bcdiv($drug_income, $billing_income, 4)*100 . '%';
             } else {
                 $drug_rate = 0;
             }
             if (($billing_income-$drug_income) > 0) {
-                $consumable_rate = bcdiv($consumable_pay, ($billing_income-$drug_income), 2);
+                $consumable_rate = bcdiv($consumable_pay, ($billing_income-$drug_income), 4)*100 . '%';
             } else {
                 $consumable_rate = 0;
             }
@@ -172,6 +172,8 @@ class Indicators extends Command
 
             Indicator::where('date', $date)->where('dep', $value)->delete();
             Indicator::create($insert_data);
+
+            $billing_data = $pay_data = [];
         }
         
         $this->info("======end======");

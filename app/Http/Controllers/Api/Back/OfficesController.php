@@ -49,6 +49,12 @@ class OfficesController extends Controller
                     ['value' => $user['name']]
                 ];
             }
+
+            if (isset($params['indicator']) && $params['indicator'] == 1) {
+                $office = [
+                    ['value' => $user['name']]
+                ];
+            }
         }
 
         return responder()->success($office);

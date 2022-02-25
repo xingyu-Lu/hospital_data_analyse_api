@@ -16,6 +16,10 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
+                'content' => '重点指标任务脚本修改，菜单优化，默认科室优化，加重点指标等等',
+                'timestamp' => '2022-02-25',
+            ],
+            [
                 'content' => '重点指标任务脚本，成本控制任务脚本等等',
                 'timestamp' => '2022-02-24',
             ],

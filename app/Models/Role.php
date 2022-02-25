@@ -57,6 +57,8 @@ class Role extends SpatieRole
 
     public function syncMenus($menu)
     {
+        DB::table('role_has_menus')->where('role_id', $this->id)->delete();
+
         foreach ($menu as $key => $value) {
             $query = DB::table('role_has_menus')->where('role_id', $this->id)->where('menu_id', $value)->first();
 
