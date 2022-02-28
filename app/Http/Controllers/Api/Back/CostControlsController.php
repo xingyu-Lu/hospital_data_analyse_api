@@ -53,6 +53,7 @@ class CostControlsController extends Controller
                 $cost_control_data[$select_key]['fixed_asset_cost'] = bcadd($cost_control_data[$select_key]['fixed_asset_cost'], $value['fixed_asset_cost'], 2);
                 $cost_control_data[$select_key]['other_cost'] = bcadd($cost_control_data[$select_key]['other_cost'], $value['other_cost'], 2);
                 $cost_control_data[$select_key]['total_cost'] = bcadd($cost_control_data[$select_key]['total_cost'], $value['total_cost'], 2);
+                $cost_control_data[$select_key]['billing_income'] = bcadd($cost_control_data[$select_key]['billing_income'], $value['billing_income'], 2);
             } else {
                 $cost_control_data[$select_key] = [
                     'year' => $value['year'],
@@ -65,9 +66,12 @@ class CostControlsController extends Controller
                     'fixed_asset_cost' => $value['fixed_asset_cost'],
                     'other_cost' => $value['other_cost'],
                     'total_cost' => $value['total_cost'],
+                    'billing_income' => $value['billing_income'],
                 ];
             }
         }
+
+        $cost_control_data = array_values($cost_control_data);
 
         // 获取日期
         $date_arr = array_values(array_unique(array_column($cost_control_data, 'date')));
@@ -78,55 +82,66 @@ class CostControlsController extends Controller
         $personnel_cost_avg = $consumable_cost_avg = $drug_cost_avg = $fixed_asset_cost_avg = $other_cost_avg = $total_cost_avg = 0;
 
         // 求平均
-        $personnel_cost_arr = array_values($cost_control_data, 'personnel_cost');
+        $billing_income_total = 0;
+        $billing_income_arr = array_column($cost_control_data, 'billing_income');
+        foreach ($billing_income_arr as $key => $value) {
+            $billing_income_total = bcadd($billing_income_total, $value, 2);
+        }
+
+        $personnel_cost_arr = array_column($cost_control_data, 'personnel_cost');
         foreach ($personnel_cost_arr as $key => $value) {
             $personnel_cost_total = bcadd($personnel_cost_total, $value, 2);
         }
-        $personnel_cost_avg = bcdiv($personnel_cost_total, $month_num, 2);
 
-        $consumable_cost_arr = array_values($cost_control_data, 'consumable_cost');
+        $consumable_cost_arr = array_column($cost_control_data, 'consumable_cost');
         foreach ($consumable_cost_arr as $key => $value) {
             $consumable_cost_total = bcadd($consumable_cost_total, $value, 2);
         }
-        $consumable_cost_avg = bcdiv($consumable_cost_total, $month_num, 2);
 
-        $drug_cost_arr = array_values($cost_control_data, 'drug_cost');
+        $drug_cost_arr = array_column($cost_control_data, 'drug_cost');
         foreach ($drug_cost_arr as $key => $value) {
             $drug_cost_total = bcadd($drug_cost_total, $value, 2);
         }
-        $drug_cost_avg = bcdiv($drug_cost_total, $month_num, 2);
 
-        $fixed_asset_cost_arr = array_values($cost_control_data, 'fixed_asset_cost');
+        $fixed_asset_cost_arr = array_column($cost_control_data, 'fixed_asset_cost');
         foreach ($fixed_asset_cost_arr as $key => $value) {
             $fixed_asset_cost_total = bcadd($fixed_asset_cost_total, $value, 2);
         }
-        $fixed_asset_cost_avg = bcdiv($fixed_asset_cost_total, $month_num, 2);  
         
-        $other_cost_arr = array_values($cost_control_data, 'other_cost');
+        $other_cost_arr = array_column($cost_control_data, 'other_cost');
         foreach ($other_cost_arr as $key => $value) {
             $other_cost_total = bcadd($other_cost_total, $value, 2);
         }
-        $other_cost_avg = bcdiv($other_cost_total, $month_num, 2);
 
-        $total_cost_arr = array_values($cost_control_data, 'total_cost');
+        $total_cost_arr = array_column($cost_control_data, 'total_cost');
         foreach ($total_cost_arr as $key => $value) {
             $total_cost_total = bcadd($total_cost_total, $value, 2);
         }
-        $total_cost_avg = bcdiv($total_cost_total, $month_num, 2);
 
         $cost_control_data[] = [
-            'date' => '合计',
+            'date' => '平均',
             'year' => '',
             'month' => '',
             'dep' => $office_name,
-            'personnel_cost' => $personnel_cost_avg,
-            'consumable_cost' => $consumable_cost_avg,
-            'drug_cost' => $drug_cost_avg,
-            'fixed_asset_cost' => $fixed_asset_cost_avg,
-            'other_cost' => $other_cost_avg,
-            'total_cost' => $total_cost_avg,
+            'personnel_cost' => $personnel_cost_total,
+            'consumable_cost' => $consumable_cost_total,
+            'drug_cost' => $drug_cost_total,
+            'fixed_asset_cost' => $fixed_asset_cost_total,
+            'other_cost' => $other_cost_total,
+            'total_cost' => $total_cost_total,
+            'billing_income' => $billing_income_total
         ];
         unset($cost_control);
+
+        foreach ($cost_control_data as $key => &$value) {
+            $value['personnel_cost'] = bcmul(bcdiv($value['personnel_cost'], $value['billing_income'], 4), 100, 2);
+            $value['consumable_cost'] = bcmul(bcdiv($value['consumable_cost'], $value['billing_income'], 4), 100, 2);
+            $value['drug_cost'] = bcmul(bcdiv($value['drug_cost'], $value['billing_income'], 4), 100, 2);
+            $value['fixed_asset_cost'] = bcmul(bcdiv($value['fixed_asset_cost'], $value['billing_income'], 4), 100, 2);
+            $value['other_cost'] = bcmul(bcdiv($value['other_cost'], $value['billing_income'], 4), 100, 2);
+            $value['total_cost'] = bcmul(bcdiv($value['total_cost'], $value['billing_income'], 4), 100, 2);
+        }
+        unset($value);
 
         //实例化Excel
         $spreadsheet = new Spreadsheet();
@@ -143,7 +158,7 @@ class CostControlsController extends Controller
             $worksheet->setCellValueByColumnAndRow($key+1, 1, $value);
         }
 
-        foreach ($res_data as $key => $value) {
+        foreach ($cost_control_data as $key => $value) {
             $worksheet->setCellValueByColumnAndRow(1, $key+2, $value['date']);
             $worksheet->setCellValueByColumnAndRow(2, $key+2, $value['personnel_cost']);
             $worksheet->setCellValueByColumnAndRow(3, $key+2, $value['consumable_cost']);
@@ -211,6 +226,7 @@ class CostControlsController extends Controller
                 $cost_control_data[$select_key]['fixed_asset_cost'] = bcadd($cost_control_data[$select_key]['fixed_asset_cost'], $value['fixed_asset_cost'], 2);
                 $cost_control_data[$select_key]['other_cost'] = bcadd($cost_control_data[$select_key]['other_cost'], $value['other_cost'], 2);
                 $cost_control_data[$select_key]['total_cost'] = bcadd($cost_control_data[$select_key]['total_cost'], $value['total_cost'], 2);
+                $cost_control_data[$select_key]['billing_income'] = bcadd($cost_control_data[$select_key]['billing_income'], $value['billing_income'], 2);
             } else {
                 $cost_control_data[$select_key] = [
                     'year' => $value['year'],
@@ -223,9 +239,12 @@ class CostControlsController extends Controller
                     'fixed_asset_cost' => $value['fixed_asset_cost'],
                     'other_cost' => $value['other_cost'],
                     'total_cost' => $value['total_cost'],
+                    'billing_income' => $value['billing_income'],
                 ];
             }
         }
+
+        $cost_control_data = array_values($cost_control_data);
 
         // 获取日期
         $date_arr = array_values(array_unique(array_column($cost_control_data, 'date')));
@@ -236,55 +255,68 @@ class CostControlsController extends Controller
         $personnel_cost_avg = $consumable_cost_avg = $drug_cost_avg = $fixed_asset_cost_avg = $other_cost_avg = $total_cost_avg = 0;
 
         // 求平均
-        $personnel_cost_arr = array_values($cost_control_data, 'personnel_cost');
+        $billing_income_total = 0;
+        $billing_income_arr = array_column($cost_control_data, 'billing_income');
+        foreach ($billing_income_arr as $key => $value) {
+            $billing_income_total = bcadd($billing_income_total, $value, 2);
+        }
+
+        $personnel_cost_arr = array_column($cost_control_data, 'personnel_cost');
         foreach ($personnel_cost_arr as $key => $value) {
             $personnel_cost_total = bcadd($personnel_cost_total, $value, 2);
         }
-        $personnel_cost_avg = bcdiv($personnel_cost_total, $month_num, 2);
 
-        $consumable_cost_arr = array_values($cost_control_data, 'consumable_cost');
+        $consumable_cost_arr = array_column($cost_control_data, 'consumable_cost');
         foreach ($consumable_cost_arr as $key => $value) {
             $consumable_cost_total = bcadd($consumable_cost_total, $value, 2);
         }
-        $consumable_cost_avg = bcdiv($consumable_cost_total, $month_num, 2);
 
-        $drug_cost_arr = array_values($cost_control_data, 'drug_cost');
+        $drug_cost_arr = array_column($cost_control_data, 'drug_cost');
         foreach ($drug_cost_arr as $key => $value) {
             $drug_cost_total = bcadd($drug_cost_total, $value, 2);
         }
-        $drug_cost_avg = bcdiv($drug_cost_total, $month_num, 2);
 
-        $fixed_asset_cost_arr = array_values($cost_control_data, 'fixed_asset_cost');
+        $fixed_asset_cost_arr = array_column($cost_control_data, 'fixed_asset_cost');
         foreach ($fixed_asset_cost_arr as $key => $value) {
             $fixed_asset_cost_total = bcadd($fixed_asset_cost_total, $value, 2);
         }
-        $fixed_asset_cost_avg = bcdiv($fixed_asset_cost_total, $month_num, 2);  
         
-        $other_cost_arr = array_values($cost_control_data, 'other_cost');
+        $other_cost_arr = array_column($cost_control_data, 'other_cost');
         foreach ($other_cost_arr as $key => $value) {
             $other_cost_total = bcadd($other_cost_total, $value, 2);
         }
-        $other_cost_avg = bcdiv($other_cost_total, $month_num, 2);
 
-        $total_cost_arr = array_values($cost_control_data, 'total_cost');
+        $total_cost_arr = array_column($cost_control_data, 'total_cost');
         foreach ($total_cost_arr as $key => $value) {
             $total_cost_total = bcadd($total_cost_total, $value, 2);
         }
-        $total_cost_avg = bcdiv($total_cost_total, $month_num, 2);
 
         $cost_control_data[] = [
-            'date' => '合计',
+            'date' => '平均',
             'year' => '',
             'month' => '',
             'dep' => $office_name,
-            'personnel_cost' => $personnel_cost_avg,
-            'consumable_cost' => $consumable_cost_avg,
-            'drug_cost' => $drug_cost_avg,
-            'fixed_asset_cost' => $fixed_asset_cost_avg,
-            'other_cost' => $other_cost_avg,
-            'total_cost' => $total_cost_avg,
+            'personnel_cost' => $personnel_cost_total,
+            'consumable_cost' => $consumable_cost_total,
+            'drug_cost' => $drug_cost_total,
+            'fixed_asset_cost' => $fixed_asset_cost_total,
+            'other_cost' => $other_cost_total,
+            'total_cost' => $total_cost_total,
+            'billing_income' => $billing_income_total
         ];
         unset($cost_control);
+
+        foreach ($cost_control_data as $key => &$value) {
+            $value['personnel_cost'] = bcmul(bcdiv($value['personnel_cost'], $value['billing_income'], 4), 100, 2);
+            $value['consumable_cost'] = bcmul(bcdiv($value['consumable_cost'], $value['billing_income'], 4), 100, 2);
+            $value['drug_cost'] = bcmul(bcdiv($value['drug_cost'], $value['billing_income'], 4), 100, 2);
+            $value['fixed_asset_cost'] = bcmul(bcdiv($value['fixed_asset_cost'], $value['billing_income'], 4), 100, 2);
+            $value['other_cost'] = bcmul(bcdiv($value['other_cost'], $value['billing_income'], 4), 100, 2);
+            $value['total_cost'] = bcmul(bcdiv($value['total_cost'], $value['billing_income'], 4), 100, 2);
+        }
+        unset($value);
+        $total_cost_arr = array_column($cost_control_data, 'total_cost');
+        array_pop($total_cost_arr);
 
         // 科室折线图
         $line_chart = [
@@ -302,7 +334,7 @@ class CostControlsController extends Controller
             ['date', '<=', $end_date],
         ];
 
-        $cost_control_qy_lc = Pay::where($where_qy_lc)->whereIn('dep', $office_lc)->orderBy('date', 'asc')->get()->toArray();
+        $cost_control_qy_lc = CostControl::where($where_qy_lc)->whereIn('dep', $office_lc)->orderBy('date', 'asc')->get()->toArray();
         $cost_control_data_qy_lc = [];
 
         foreach ($cost_control_qy_lc as $key => $value) {
@@ -315,6 +347,7 @@ class CostControlsController extends Controller
                 $cost_control_data_qy_lc[$select_key]['fixed_asset_cost'] = bcadd($cost_control_data_qy_lc[$select_key]['fixed_asset_cost'], $value['fixed_asset_cost'], 2);
                 $cost_control_data_qy_lc[$select_key]['other_cost'] = bcadd($cost_control_data_qy_lc[$select_key]['other_cost'], $value['other_cost'], 2);
                 $cost_control_data_qy_lc[$select_key]['total_cost'] = bcadd($cost_control_data_qy_lc[$select_key]['total_cost'], $value['total_cost'], 2);
+                $cost_control_data_qy_lc[$select_key]['billing_income'] = bcadd($cost_control_data_qy_lc[$select_key]['billing_income'], $value['billing_income'], 2);
             } else {
                 $cost_control_data_qy_lc[$select_key] = [
                     'year' => $value['year'],
@@ -327,9 +360,20 @@ class CostControlsController extends Controller
                     'fixed_asset_cost' => $value['fixed_asset_cost'],
                     'other_cost' => $value['other_cost'],
                     'total_cost' => $value['total_cost'],
+                    'billing_income' => $value['billing_income']
                 ];
             }
         }
+
+        foreach ($cost_control_data_qy_lc as $key => &$value) {
+            $value['personnel_cost'] = bcmul(bcdiv($value['personnel_cost'], $value['billing_income'], 4), 100, 2);
+            $value['consumable_cost'] = bcmul(bcdiv($value['consumable_cost'], $value['billing_income'], 4), 100, 2);
+            $value['drug_cost'] = bcmul(bcdiv($value['drug_cost'], $value['billing_income'], 4), 100, 2);
+            $value['fixed_asset_cost'] = bcmul(bcdiv($value['fixed_asset_cost'], $value['billing_income'], 4), 100, 2);
+            $value['other_cost'] = bcmul(bcdiv($value['other_cost'], $value['billing_income'], 4), 100, 2);
+            $value['total_cost'] = bcmul(bcdiv($value['total_cost'], $value['billing_income'], 4), 100, 2);
+        }
+        unset($value);
 
         unset($cost_control_qy_lc);
 

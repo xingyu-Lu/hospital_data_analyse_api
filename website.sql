@@ -92,6 +92,23 @@ CREATE TABLE `syy_billing_incomes` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='开单收入表';
 
+DROP TABLE IF EXISTS `syy_billing_charge_names`;
+CREATE TABLE `syy_billing_charge_names` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
+  `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
+  `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
+  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月 2：整月',
+  `billing_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '开单科室',
+  `patient_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '病人科室',
+  `charge_name` varchar(300) NOT NULL DEFAULT '' COMMENT '收费名称',
+  `num` int(11) NOT NULL DEFAULT 0 COMMENT '数量',
+  `money` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '金额',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='开单收费名称表';
+
 DROP TABLE IF EXISTS `syy_receive_incomes`;
 CREATE TABLE `syy_receive_incomes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
@@ -119,6 +136,23 @@ CREATE TABLE `syy_receive_incomes` (
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='接单收入表';
+
+DROP TABLE IF EXISTS `syy_receive_charge_names`;
+CREATE TABLE `syy_receive_charge_names` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT, 
+  `date` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '日期（年月）',
+  `year` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '年',
+  `month` int(11) unsigned NOT NULL DEFAULT 0 COMMENT '月',
+  `type` tinyint(10) unsigned NOT NULL DEFAULT 0 COMMENT '0:上半月 1：下半月 2：整月',
+  `receive_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '接单科室',
+  `patient_dep` varchar(50) NOT NULL DEFAULT '' COMMENT '病人科室',
+  `charge_name` varchar(300) NOT NULL DEFAULT '' COMMENT '收费名称',
+  `num` int(11) NOT NULL DEFAULT 0 COMMENT '数量',
+  `money` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '金额',
+  `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='接单收费名称表';
 
 DROP TABLE IF EXISTS `syy_pays`;
 CREATE TABLE `syy_pays` (
@@ -176,6 +210,7 @@ CREATE TABLE `syy_cost_controls` (
   `fixed_asset_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '固定资产折旧费成本',
   `other_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '其他支出成本',
   `total_cost` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '合计成本',
+  `billing_income` decimal(10, 2) NOT NULL DEFAULT 0 COMMENT '开单收入',
   `created_at` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `updated_at` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)

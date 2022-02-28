@@ -55,6 +55,13 @@ class OfficesController extends Controller
                     ['value' => $user['name']]
                 ];
             }
+
+            if (isset($params['cost_control']) && $params['cost_control'] == 1) {
+                $office = [
+                    ['value' => '全院'],
+                    ['value' => $user['name']]
+                ];
+            }
         }
 
         return responder()->success($office);

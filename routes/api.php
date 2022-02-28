@@ -70,5 +70,11 @@ Route::namespace('Api\Back')->prefix('back')->group(function () {
         // 成本控制
         Route::get('costControls/export', 'CostControlsController@export')->name('costControls/export');
         Route::apiResource('costControls', 'CostControlsController');
+
+        // 开单排名
+        Route::apiResource('billingRanks', 'BillingRanksController');
+
+        // 接单排名
+        Route::apiResource('receiveRanks', 'ReceiveRanksController');
     });
 });

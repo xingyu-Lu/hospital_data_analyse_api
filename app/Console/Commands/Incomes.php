@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\BillingChargeName;
 use App\Models\BillingIncome;
 use App\Models\ChargeProject;
 use App\Models\OfficeContrast;
+use App\Models\ReceiveChargeName;
 use App\Models\ReceiveIncome;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -128,6 +130,7 @@ class Incomes extends Command
             $receive_dep = $value['5'];
             $patient_dep = $value['7'];
             $charge_subclass = $value['8'];
+            $charge_name = $value['10'];
 
             if (strstr($patient_dep, '(手术治疗)')) {
                 if ($billing_dep == 'SSS手术室') {
@@ -143,6 +146,7 @@ class Incomes extends Command
             $receive_dep = $office_contrast_all[$receive_dep] ?? $receive_dep ?? '';
             $patient_dep = $office_contrast_all[$patient_dep] ?? $patient_dep ?? '';
             $charge_subclass = $charge_subclass_all[$charge_subclass] ?? $charge_subclass ?? '';
+            $charge_name = $charge_name ?? '';
 
             $data[] = [
                 'date' => $date,
@@ -153,8 +157,7 @@ class Incomes extends Command
                 'receive_dep' => $receive_dep,
                 'patient_dep' => $patient_dep,
                 'charge_subclass' => $charge_subclass,
-                // 'num' => $value['num'],
-                // 'money' => $value['money'],
+                'charge_name' => $charge_name,
                 'num' => $value[11],
                 'money' => $value[12],
             ];
@@ -164,9 +167,11 @@ class Incomes extends Command
 
         $billing_data = $receive_data = [];
 
+        $billing_charge_name_data = $receive_charge_name_data = [];
+
         // 数据汇总归集
         foreach ($data as $key => $value) {
-            // 开单数据汇总归集
+            // 开单收费子类数据汇总归集
             $billing_key = $value['billing_dep'] . '-' . $value['patient_dep'] . '-' . $value['charge_subclass'];
 
             if (isset($billing_data[$billing_key])) {
@@ -186,7 +191,26 @@ class Incomes extends Command
                 ];
             }
 
-            // 接单数据汇总归集
+            // 开单收费名称数据汇总归集
+            $billing_charge_name_key = $value['billing_dep'] . '-' . $value['patient_dep'] . $value['charge_name'];
+            if (isset($billing_charge_name_data[$billing_charge_name_key])) {
+                $billing_charge_name_data[$billing_charge_name_key]['num'] += $value['num'];
+                $billing_charge_name_data[$billing_charge_name_key]['money'] += $value['money'];
+            } else {
+                $billing_charge_name_data[$billing_charge_name_key] = [
+                    'date' => $value['date'],
+                    'year' => $value['year'],
+                    'month' => $value['month'],
+                    'type' => $value['type'],
+                    'billing_dep' => $value['billing_dep'],
+                    'patient_dep' => $value['patient_dep'],
+                    'charge_name' => $value['charge_name'],
+                    'num' => $value['num'],
+                    'money' => $value['money'],
+                ];
+            }
+
+            // 接单收费子类数据汇总归集
             $receive_key = $value['receive_dep'] . '-' . $value['patient_dep'] . '-' . $value['charge_subclass'];
 
             if (isset($receive_data[$receive_key])) {
@@ -205,9 +229,40 @@ class Incomes extends Command
                     'money' => $value['money'],
                 ];
             }
+
+            // 接单收费名称数据汇总归集
+            $receive_charge_name_key = $value['receive_dep'] . '-' . $value['patient_dep'] . '-' . $value['charge_name'];
+            if (isset($receive_charge_name_data[$receive_charge_name_key])) {
+                $receive_charge_name_data[$receive_charge_name_key]['num'] += $value['num'];
+                $receive_charge_name_data[$receive_charge_name_key]['money'] += $value['money'];
+            } else {
+                $receive_charge_name_data[$receive_charge_name_key] = [
+                    'date' => $value['date'],
+                    'year' => $value['year'],
+                    'month' => $value['month'],
+                    'type' => $value['type'],
+                    'receive_dep' => $value['receive_dep'],
+                    'patient_dep' => $value['patient_dep'],
+                    'charge_name' => $value['charge_name'],
+                    'num' => $value['num'],
+                    'money' => $value['money'],
+                ];
+            }
         }
 
         unset($data);
+
+        // 开单收费名称数据入库
+        foreach ($billing_charge_name_data as $key => $value) {
+            BillingChargeName::create($value);
+        }
+        unset($billing_charge_name_data);
+
+        // 接单收费名称数据入库
+        foreach ($receive_charge_name_data as $key => $value) {
+            ReceiveChargeName::create($value);
+        }
+        unset($receive_charge_name_data);
 
         $billing_insert_data = $receive_insert_data = [];
         // 准备开单入库数据

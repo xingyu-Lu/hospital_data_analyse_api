@@ -128,23 +128,28 @@ class CostControls extends Command
             $personnel_cost = $consumable_cost = $drug_cost = $fixed_asset_cost = $other_cost = 0;
 
             $billing_income = $billing_data[0]['total_money'] ?? 0;
+            $personnel_cost = $pay_data[0]['personnel_pay'] ?? 0;
+            $consumable_cost = $pay_data[0]['material_pay'] ?? 0;
+            $drug_cost = $pay_data[0]['medicine_pay'] ?? 0;
+            $fixed_asset_cost = $pay_data[0]['fixed_asset_pay'] ?? 0;
+            $other_cost = $pay_data[0]['other_pay'] ?? 0;
 
-            if ($billing_income > 0) {
-                $personnel_pay = $pay_data[0]['personnel_pay'] ?? 0;
-                $personnel_cost = bcdiv($personnel_pay, $billing_income, 2);
+            // if ($billing_income > 0) {
+            //     $personnel_pay = $pay_data[0]['personnel_pay'] ?? 0;
+            //     $personnel_cost = bcdiv($personnel_pay, $billing_income, 4)*100;
 
-                $material_pay = $pay_data[0]['material_pay'] ?? 0;
-                $consumable_cost = bcdiv($material_pay, $billing_income, 2);
+            //     $material_pay = $pay_data[0]['material_pay'] ?? 0;
+            //     $consumable_cost = bcdiv($material_pay, $billing_income, 4)*100;
                 
-                $medicine_pay = $pay_data[0]['medicine_pay'] ?? 0;
-                $drug_cost = bcdiv($medicine_pay, $billing_income, 2);
+            //     $medicine_pay = $pay_data[0]['medicine_pay'] ?? 0;
+            //     $drug_cost = bcdiv($medicine_pay, $billing_income, 4)*100;
 
-                $fixed_asset_pay = $pay_data[0]['fixed_asset_pay'] ?? 0;
-                $fixed_asset_cost = bcdiv($fixed_asset_pay, $billing_income, 2);
+            //     $fixed_asset_pay = $pay_data[0]['fixed_asset_pay'] ?? 0;
+            //     $fixed_asset_cost = bcdiv($fixed_asset_pay, $billing_income, 4)*100;
 
-                $other_pay = $pay_data[0]['other_pay'] ?? 0;
-                $other_cost = bcdiv($other_pay, $billing_income, 2);
-            }
+            //     $other_pay = $pay_data[0]['other_pay'] ?? 0;
+            //     $other_cost = bcdiv($other_pay, $billing_income, 4)*100;
+            // }
 
             $total_cost = $personnel_cost + $consumable_cost + $drug_cost + $fixed_asset_cost + $other_cost;
             
@@ -157,11 +162,15 @@ class CostControls extends Command
                 'consumable_cost' => $consumable_cost,
                 'drug_cost' => $drug_cost,
                 'fixed_asset_cost' => $fixed_asset_cost,
-                'other_cost' => $other_cost
+                'other_cost' => $other_cost,
+                'total_cost' => $total_cost,
+                'billing_income' => $billing_income,
             ];
 
             CostControl::where('date', $date)->where('dep', $value)->delete();
             CostControl::create($insert_data);
+
+            $billing_data = $pay_data = [];
         }
         
         $this->info("======end======");
