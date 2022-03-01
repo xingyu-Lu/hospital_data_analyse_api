@@ -52,7 +52,11 @@ class BillingRanksController extends Controller
 
         $total_money = BillingIncome::where($where)->sum('total_money');
         foreach ($res_data as $key => &$value) {
-            $value['ratio'] = bcmul(bcdiv($value['money'], $total_money, 4), 100) . '%';
+            $ratio = 0;
+            if ($total_money > 0) {
+                $ratio = bcmul(bcdiv($value['money'], $total_money, 4), 100, 2) . '%';
+            }
+            $value['ratio'] = $ratio;
         }
         unset($value);
         $res_data = array_values($res_data);
@@ -61,19 +65,26 @@ class BillingRanksController extends Controller
 
         // 合计
         $total_money_total = 0;
+        $total_ratio = 0;
         $total_money_arr = array_column($res_data, 'money');
         foreach ($total_money_arr as $key => $value) {
             $total_money_total = bcadd($total_money_total, $value, 2);
         }
 
-        $res_data[] = [
-            'rank' => '合计',
-            'billing_dep' => '',
-            'charge_name' => '',
-            'money' => $total_money_total,
-            'num' => '',
-            'ratio' => bcmul(bcdiv($total_money_total, $total_money, 4), 100) . '%'
-        ];
+        if ($total_money > 0) {
+            $total_ratio = bcmul(bcdiv($total_money_total, $total_money, 4), 100, 2) . '%';
+        }
+
+        if ($res_data) {
+            $res_data[] = [
+                'rank' => '合计',
+                'billing_dep' => '',
+                'charge_name' => '',
+                'money' => $total_money_total,
+                'num' => '',
+                'ratio' => $total_ratio
+            ];
+        }
 
         //实例化Excel
         $spreadsheet = new Spreadsheet();
@@ -154,7 +165,11 @@ class BillingRanksController extends Controller
 
         $total_money = BillingIncome::where($where)->sum('total_money');
         foreach ($res_data as $key => &$value) {
-            $value['ratio'] = bcmul(bcdiv($value['money'], $total_money, 4), 100) . '%';
+            $ratio = 0;
+            if ($total_money > 0) {
+                $ratio = bcmul(bcdiv($value['money'], $total_money, 4), 100, 2) . '%';
+            }
+            $value['ratio'] = $ratio;
         }
         unset($value);
         $res_data = array_values($res_data);
@@ -162,19 +177,25 @@ class BillingRanksController extends Controller
 
         // 合计
         $total_money_total = 0;
+        $total_ratio = 0;
         $total_money_arr = array_column($res_data, 'money');
         foreach ($total_money_arr as $key => $value) {
             $total_money_total = bcadd($total_money_total, $value, 2);
         }
+        if ($total_money >0 ) {
+            $total_ratio = bcmul(bcdiv($total_money_total, $total_money, 4), 100, 2) . '%';
+        }
 
-        $res_data[] = [
-            'rank' => '合计',
-            'billing_dep' => '',
-            'charge_name' => '',
-            'money' => $total_money_total,
-            'num' => '',
-            'ratio' => bcmul(bcdiv($total_money_total, $total_money, 4), 100) . '%'
-        ];
+        if ($res_data) {
+            $res_data[] = [
+                'rank' => '合计',
+                'billing_dep' => '',
+                'charge_name' => '',
+                'money' => $total_money_total,
+                'num' => '',
+                'ratio' => $total_ratio
+            ];
+        }
 
         return responder()->success($res_data);
     }
