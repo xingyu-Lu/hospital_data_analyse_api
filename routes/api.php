@@ -72,9 +72,11 @@ Route::namespace('Api\Back')->prefix('back')->group(function () {
         Route::apiResource('costControls', 'CostControlsController');
 
         // 开单排名
+        Route::get('billingRanks/export', 'BillingRanksController@export')->name('billingRanks/export');
         Route::apiResource('billingRanks', 'BillingRanksController');
 
         // 接单排名
+        Route::get('receiveRanks/export', 'ReceiveRanksController@export')->name('receiveRanks/export');
         Route::apiResource('receiveRanks', 'ReceiveRanksController');
     });
 });
