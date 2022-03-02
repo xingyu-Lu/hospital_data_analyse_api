@@ -16,6 +16,10 @@ class UpdateLogsController extends Controller
     {
         $data = [
             [
+                'content' => '接单排名接口及页面编写，联调,升级element-pus等等',
+                'timestamp' => '2022-03-02',
+            ],
+            [
                 'content' => '开单排名接口及页面编写，联调等等',
                 'timestamp' => '2022-03-01',
             ],
