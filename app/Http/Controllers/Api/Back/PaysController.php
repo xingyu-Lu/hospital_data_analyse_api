@@ -133,7 +133,7 @@ class PaysController extends Controller
         $worksheet->setTitle($office_name . '-支出明细');
 
         $head_arr = [
-            '日期', '人员经费', '固定资产折旧费', '卫生材料费', '药品费', '其他费用', '总金额'
+            '日期', '人员经费(元)', '固定资产折旧费(元)', '卫生材料费(元)', '药品费(元)', '其他费用(元)', '总金额(元)'
         ];
 
         foreach ($head_arr as $key => $value) {
