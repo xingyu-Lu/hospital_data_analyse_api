@@ -253,12 +253,14 @@ class Incomes extends Command
         unset($data);
 
         // 开单收费名称数据入库
+        BillingChargeName::where('date', $date)->where('type', $type)->delete();
         foreach ($billing_charge_name_data as $key => $value) {
             BillingChargeName::create($value);
         }
         unset($billing_charge_name_data);
 
         // 接单收费名称数据入库
+        ReceiveChargeName::where('date', $date)->where('type', $type)->delete();
         foreach ($receive_charge_name_data as $key => $value) {
             ReceiveChargeName::create($value);
         }
