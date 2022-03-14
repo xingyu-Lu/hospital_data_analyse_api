@@ -58,7 +58,7 @@ class OfficesController extends Controller
 
             if (isset($params['cost_control']) && $params['cost_control'] == 1) {
                 $office = [
-                    ['value' => '全院'],
+                    ['value' => '全院临床'],
                     ['value' => $user['name']]
                 ];
             }
